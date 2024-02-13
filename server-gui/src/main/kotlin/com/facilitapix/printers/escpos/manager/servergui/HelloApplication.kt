@@ -1,6 +1,5 @@
 package com.facilitapix.printers.escpos.manager.servergui
 
-import com.facilitapix.printers.escpos.server.HttpServerImpl
 import kotlinx.coroutines.*
 import kotlinx.coroutines.javafx.JavaFx
 import javafx.application.Application
