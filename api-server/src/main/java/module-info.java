@@ -13,6 +13,10 @@ module com.facilitapix.printers.escpos.server {
     requires io.ktor.http;
     requires java.desktop;
     requires escpos.coffee;
+    requires transitive org.slf4j;
+    requires transitive java.naming;
+    requires transitive ch.qos.logback.classic;
+    requires transitive ch.qos.logback.core;
 
     exports com.facilitapix.printers.escpos.server;
     provides com.facilitapix.printers.escpos.server.HttpServer with HttpServerImpl;
