@@ -41,12 +41,12 @@ class HelloApplication : Application() {
         stage.scene = scene
         stage.show()
         setup(hello, fab)
+        HttpServerImpl().start()
     }
 }
 
 fun setup(hello: Text, fab: Circle) {
     val job = GlobalScope.launch(Dispatchers.JavaFx) { // launch coroutine in the main thread
-        HttpServerImpl().start()
         for (i in 10 downTo 1) { // countdown from 10 to 1
             hello.text = "Countdown $i ..." // update text
             delay(500) // wait half a second
