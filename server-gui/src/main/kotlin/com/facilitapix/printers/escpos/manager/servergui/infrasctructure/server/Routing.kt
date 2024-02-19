@@ -1,8 +1,8 @@
-package com.facilitapix.printers.escpos.manager.servergui.plugins
+package com.facilitapix.printers.escpos.manager.servergui.infrasctructure.server
 
-import com.facilitapix.printers.escpos.manager.servergui.domain.OrderReceipt
-import com.facilitapix.printers.escpos.manager.servergui.domain.getAllPrinters
-import com.facilitapix.printers.escpos.manager.servergui.domain.printOrderReceipt
+import com.facilitapix.printers.escpos.manager.servergui.domain.server.OrderReceipt
+import com.facilitapix.printers.escpos.manager.servergui.domain.printer.getAllPrinters
+import com.facilitapix.printers.escpos.manager.servergui.domain.printer.printOrderReceipt
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*

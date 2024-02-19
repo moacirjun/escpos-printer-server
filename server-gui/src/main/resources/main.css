@@ -1,0 +1,64 @@
+* {
+    -mfx-primary-bg: rgb(99, 102, 241);
+}
+
+#mainView {
+    -fx-background-color: white;
+    -fx-min-width: 400;
+    -fx-max-width: 400;
+}
+
+.mfx-button {
+    -fx-text-fill: -mfx-text-he;
+}
+
+.mfx-button .mfx-ripple-generator {
+    -mfx-ripple-radius: 40;
+    -mfx-auto-clip: true;
+}
+
+.mfx-button .text {
+    -fx-font-smoothing-type: gray;
+}
+
+.primary {
+    -fx-background-color: -mfx-primary-bg;
+    -fx-text-fill: white
+}
+
+.outline-button {
+    -fx-background-color: transparent;
+    -fx-border-color: -mfx-primary-bg;
+    -fx-border-radius: 3;
+
+    -fx-text-fill: -mfx-primary-bg;
+}
+
+.link-button {
+    -fx-background-color: transparent;
+    -fx-border-radius: 3;
+    -fx-text-fill: #0096FF;
+    -fx-underline: true;
+    -fx-cursor: hand;
+}
+
+.link-button:armed,
+.link-button:focused {
+    -fx-border-color: #006BFF;
+    -fx-text-fill: #006BFF;
+}
+
+.link-button .mfx-ripple-generator {
+    -mfx-ripple-color: #D9E9FF;
+}
+
+/* style.css */
+.header-label {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #555;
+}
+
+.status-label {
+    -fx-font-size: 14px;
+}

@@ -1,6 +1,7 @@
 module com.facilitapix.printers.escpos.manager.servergui {
     requires javafx.controls;
     requires javafx.fxml;
+    requires MaterialFX;
     requires kotlin.stdlib;
     requires transitive kotlinx.coroutines.core;
     requires transitive kotlinx.coroutines.javafx;
@@ -24,7 +25,10 @@ module com.facilitapix.printers.escpos.manager.servergui {
     requires escpos.coffee;
 
     opens com.facilitapix.printers.escpos.manager.servergui to javafx.fxml, kotlin.stdlib, kotlinx.coroutines.core;
+    opens com.facilitapix.printers.escpos.manager.servergui.infrasctructure.controller to javafx.fxml, kotlin.stdlib, kotlinx.coroutines.core;
     exports com.facilitapix.printers.escpos.manager.servergui;
+    exports com.facilitapix.printers.escpos.manager.servergui.infrasctructure.server;
+    exports com.facilitapix.printers.escpos.manager.servergui.infrasctructure.controller;
 
     uses ch.qos.logback.classic.spi.Configurator;
 }

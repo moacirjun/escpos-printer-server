@@ -1,4 +1,4 @@
-package com.facilitapix.printers.escpos.manager.servergui.domain
+package com.facilitapix.printers.escpos.manager.servergui.domain.server
 
 import com.fasterxml.jackson.annotation.JsonProperty
 

@@ -37,6 +37,7 @@ dependencies {
 
     implementation("com.dustinredmond.fxtrayicon:FXTrayIcon:4.0.1")
     implementation("com.github.anastaciocintra:escpos-coffee:4.1.0")
+    implementation("io.github.palexdev:materialfx:11.17.0")
 
     // Ktor
     implementation("io.ktor:ktor-server-core-jvm")
@@ -70,7 +71,7 @@ jlink {
     imageZip = project.file("${buildDir}/distributions/app-server.zip")
     addOptions("--strip-debug", "--compress=2", "--no-header-files", "--no-man-pages")
     launcher {
-        name = "app"
+        name = "FacilitaPIX Printers Interface"
     }
     addExtraDependencies("javafx", "jackson", "kotlinx")
     forceMerge("kotlinx-coroutines-core", "kotlinx-coroutines-javafx")

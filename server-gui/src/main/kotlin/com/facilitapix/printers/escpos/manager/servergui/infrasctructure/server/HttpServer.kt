@@ -1,6 +1,6 @@
-package com.facilitapix.printers.escpos.manager.servergui
+package com.facilitapix.printers.escpos.manager.servergui.infrasctructure.server
 
-import com.facilitapix.printers.escpos.manager.servergui.plugins.configureRouting
+import com.facilitapix.printers.escpos.manager.servergui.domain.server.HttpServerInterface
 import com.fasterxml.jackson.databind.SerializationFeature
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
@@ -10,28 +10,28 @@ import io.ktor.server.netty.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
 
-object ServerInstance {
-    lateinit var server: ApplicationEngine
+object HttpServer : HttpServerInterface {
 
-    fun isRunning(): Boolean {
-        return this::server.isInitialized
-    }
-}
-class HttpServerImpl : HttpServer {
+    private lateinit var server: ApplicationEngine
+
     override fun start() {
-        ServerInstance.server = embeddedServer(Netty, port = 8087, host = "0.0.0.0", module = Application::module)
+        server = embeddedServer(Netty, port = 8087, host = "0.0.0.0", module = Application::module)
             .start(wait = false)
     }
 
     override fun stop() {
-        if (ServerInstance.isRunning()) {
-            ServerInstance.server.stop(1000, 1000)
+        if (isRunning()) {
+            server.stop(1000, 1000)
         }
     }
 
     override fun restart() {
         stop()
         start()
+    }
+
+    override fun isRunning(): Boolean {
+        return this::server.isInitialized
     }
 }
 

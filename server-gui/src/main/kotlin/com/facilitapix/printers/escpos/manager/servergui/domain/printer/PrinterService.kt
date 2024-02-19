@@ -1,5 +1,6 @@
-package com.facilitapix.printers.escpos.manager.servergui.domain
+package com.facilitapix.printers.escpos.manager.servergui.domain.printer
 
+import com.facilitapix.printers.escpos.manager.servergui.domain.server.OrderReceipt
 import com.github.anastaciocintra.escpos.EscPos
 import com.github.anastaciocintra.escpos.EscPosConst
 import com.github.anastaciocintra.escpos.Style
