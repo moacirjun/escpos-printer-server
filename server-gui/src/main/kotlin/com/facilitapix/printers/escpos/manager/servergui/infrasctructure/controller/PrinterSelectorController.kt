@@ -5,9 +5,7 @@ import com.facilitapix.printers.escpos.manager.servergui.domain.printer.PrinterS
 import com.facilitapix.printers.escpos.manager.servergui.loadView
 import javafx.fxml.FXML
 import javafx.scene.Scene
-import javafx.scene.control.Alert
-import javafx.scene.control.Button
-import javafx.scene.control.ListView
+import javafx.scene.control.*
 import javafx.scene.layout.VBox
 import javafx.stage.Modality
 import javafx.stage.Stage
@@ -29,10 +27,29 @@ class PrinterSelectorController {
 
         printerListView.items.addAll(printerService.getAllPrinters())
         printerListView.selectionModel.select(currentPrinter)
+        printerListView.setCellFactory { _ ->
+            object : ListCell<String>() {
+                override fun updateItem(item: String?, empty: Boolean) {
+                    super.updateItem(item, empty)
+                    if (empty || item == null) {
+                        text = null
+                        return
+                    }
+
+                    text = item
+                    style = if (item == currentPrinter) "-fx-font-weight: bold; -fx-background-color: #f0f0f0;" else ""
+                }
+            }
+        }
 
         selectPrinterBtn.isDisable = true
         printerListView.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
             selectPrinterBtn.isDisable = newValue == null || newValue == currentPrinter
+            selectPrinterBtn.tooltip = if (selectPrinterBtn.isDisable) {
+                Tooltip("A impressora selecionada já está configurada como atual.")
+            } else {
+                Tooltip("Selecione uma impressora para configurá-la como atual.")
+            }
         }
     }
 
