@@ -5,7 +5,8 @@ import com.github.anastaciocintra.escpos.EscPos
 interface PrinterConnectorInterface {
 
     fun getAllPrinters(): List<String>
-
+    fun connectToPersistedPrinter()
+    fun getPersistedPrinter(): String?
     fun connectToPrinter(printServiceName: String)
     fun connectToFile(file: String)
     fun getSelectedPrinter(): String?

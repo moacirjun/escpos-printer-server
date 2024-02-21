@@ -24,8 +24,17 @@ class PrinterSelectorController {
     @FXML
     private fun initialize() {
         val currentPrinter = PrinterConnector.getSelectedPrinter()
+        val printers = printerService.getAllPrinters()
+        if (printers.isEmpty()) {
+            showAlert(
+                "Nenhuma Impressora Encontrada",
+                "Não foi encontrada nenhuma impressora conectada ao sistema. " +
+                        "Verifique se a impressora está conectada e ligada."
+            )
+            (printerListView.scene.window as Stage).close()
+        }
 
-        printerListView.items.addAll(printerService.getAllPrinters())
+        printerListView.items.addAll()
         printerListView.selectionModel.select(currentPrinter)
         printerListView.setCellFactory { _ ->
             object : ListCell<String>() {

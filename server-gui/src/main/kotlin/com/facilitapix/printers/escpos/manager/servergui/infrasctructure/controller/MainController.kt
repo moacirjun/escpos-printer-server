@@ -5,6 +5,7 @@ import com.facilitapix.printers.escpos.manager.servergui.domain.printer.PrinterC
 import com.facilitapix.printers.escpos.manager.servergui.infrasctructure.server.HttpServer
 import javafx.beans.property.SimpleStringProperty
 import javafx.fxml.FXML
+import javafx.scene.control.Alert
 import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.shape.Circle
@@ -59,6 +60,13 @@ class MainController {
 
     @FXML
     private fun initialize() {
+        HttpServer.start()
+        if (PrinterConnector.getPersistedPrinter() == null) {
+            PrinterSelectorController.showPrinterSelector()
+        } else {
+            connectToConfiguredPrinter()
+        }
+
         selectedPrinterLbl.textProperty().bind(systemStatus.selectedPrinter)
         serverStatusLbl.textProperty().bind(systemStatus.serverStatus)
 
@@ -87,6 +95,21 @@ class MainController {
             printerStatusIndicator.error()
             changeSelectedPrinterBtn.text = "Selecionar"
             printExampleReceiptBtn.isVisible = false
+        }
+    }
+
+    private fun connectToConfiguredPrinter() {
+        try {
+            PrinterConnector.connectToPersistedPrinter()
+        } catch (e: Exception) {
+            printerStatusIndicator.error()
+            Alert(Alert.AlertType.ERROR).apply {
+                title = "Erro ao conectar com a impressora"
+                headerText = "Erro ao conectar com a impressora"
+                contentText = "Não foi possível conectar com a impressora ${PrinterConnector.getPersistedPrinter()}. " +
+                        "Verifique se a impressora está ligada e conectada ao computador."
+                showAndWait()
+            }
         }
     }
 

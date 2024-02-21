@@ -4,6 +4,7 @@ import com.github.anastaciocintra.escpos.EscPos
 import com.github.anastaciocintra.output.PrinterOutputStream
 import java.io.FileOutputStream
 import java.io.OutputStream
+import java.util.prefs.Preferences
 import javax.print.PrintService
 
 object PrinterConnector: PrinterConnectorInterface {
@@ -16,6 +17,9 @@ object PrinterConnector: PrinterConnectorInterface {
 
     private lateinit var escPos: EscPos
 
+    private val preferences = Preferences.userRoot().node(javaClass.simpleName)
+    private const val PREFERENCE_KEY = "printerServiceName"
+
     override fun connectToPrinter(printServiceName: String) {
         if (!getAllPrinters().contains(printServiceName)) {
             throw IllegalArgumentException("Printer $printServiceName not found")
@@ -27,6 +31,7 @@ object PrinterConnector: PrinterConnectorInterface {
         }
 
         connectByPrinterName(printServiceName)
+        preferences.put(PREFERENCE_KEY, printServiceName)
     }
 
     override fun connectToFile(file: String) {
@@ -36,6 +41,7 @@ object PrinterConnector: PrinterConnectorInterface {
         }
 
         writeToFile(file)
+        preferences.remove(PREFERENCE_KEY)
     }
 
     private fun writeToFile(file: String) {
@@ -80,6 +86,16 @@ object PrinterConnector: PrinterConnectorInterface {
                 listOf("Printer 1", "Printer 2", "Printer 3", "Printer 4", "Printer 5")
             )
         }
+
+    override fun connectToPersistedPrinter() {
+        getPersistedPrinter()?.let {
+            return connectToPrinter(it)
+        }
+
+        throw IllegalStateException("No printer was persisted")
+    }
+
+    override fun getPersistedPrinter(): String? = preferences.get(PREFERENCE_KEY, null)
 
     override fun getSelectedPrinter(): String? {
         printService?.let {
