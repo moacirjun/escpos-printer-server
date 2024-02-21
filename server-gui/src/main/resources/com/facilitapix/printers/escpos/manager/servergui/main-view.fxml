@@ -42,6 +42,7 @@
                            styleClass="primary"
                            fx:id="changeSelectedPrinterBtn"
                            mnemonicParsing="false"
+                           onAction="#handleChangeSelectedPrinterBtnClick"
                            text="Alterar">
                     <graphic>
                         <ImageView preserveRatio="true" fitHeight="20">

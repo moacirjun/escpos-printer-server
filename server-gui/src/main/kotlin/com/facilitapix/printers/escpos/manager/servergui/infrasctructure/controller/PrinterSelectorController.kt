@@ -1,0 +1,77 @@
+package com.facilitapix.printers.escpos.manager.servergui.infrasctructure.controller
+
+import com.facilitapix.printers.escpos.manager.servergui.domain.printer.PrinterConnector
+import com.facilitapix.printers.escpos.manager.servergui.domain.printer.PrinterService
+import com.facilitapix.printers.escpos.manager.servergui.loadView
+import javafx.fxml.FXML
+import javafx.scene.Scene
+import javafx.scene.control.Alert
+import javafx.scene.control.Button
+import javafx.scene.control.ListView
+import javafx.scene.layout.VBox
+import javafx.stage.Modality
+import javafx.stage.Stage
+import org.slf4j.LoggerFactory
+
+class PrinterSelectorController {
+
+    @FXML
+    private lateinit var printerListView: ListView<String>
+
+    @FXML
+    private lateinit var selectPrinterBtn: Button
+
+    private val printerService = PrinterService()
+
+    @FXML
+    private fun initialize() {
+        val currentPrinter = PrinterConnector.getSelectedPrinter()
+
+        printerListView.items.addAll(printerService.getAllPrinters())
+        printerListView.selectionModel.select(currentPrinter)
+
+        selectPrinterBtn.isDisable = true
+        printerListView.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
+            selectPrinterBtn.isDisable = newValue == null || newValue == currentPrinter
+        }
+    }
+
+    @FXML
+    private fun handleSelectPrinterBtnClick() {
+        try {
+            printerService.changeSelectedPrinter(printerListView.selectionModel.selectedItem)
+            (printerListView.scene.window as Stage).close()
+//        } catch (e: SpecificExceptionType) {
+//            logger.error("Erro específico ao trocar de impressora", e)
+//            showAlert("Erro ao Trocar Impressora", e.message ?: "Erro específico ao trocar de impressora.")
+        } catch (e: Exception) {
+            logger.error("Erro ao trocar de impressora", e)
+            showAlert("Erro ao Trocar Impressora", "Não foi possível trocar a impressora. Tente novamente.")
+        }
+    }
+
+    @FXML
+    private fun handleCancelSelectPrinterBtnClick() {
+        (printerListView.scene.window as Stage).close()
+    }
+
+    private fun showAlert(title: String, content: String) {
+        val alert = Alert(Alert.AlertType.ERROR)
+        alert.title = title
+        alert.headerText = null
+        alert.contentText = content
+        alert.showAndWait()
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(PrinterSelectorController::class.java)
+
+        fun showPrinterSelector() {
+            Stage().apply {
+                scene = Scene(loadView<VBox>("printer-selector.fxml"))
+                initModality(Modality.APPLICATION_MODAL)
+                showAndWait()
+            }
+        }
+    }
+}

@@ -3,7 +3,6 @@ package com.facilitapix.printers.escpos.manager.servergui.infrasctructure.contro
 import com.facilitapix.printers.escpos.manager.servergui.domain.SystemStatus
 import com.facilitapix.printers.escpos.manager.servergui.domain.printer.PrinterConnector
 import com.facilitapix.printers.escpos.manager.servergui.infrasctructure.server.HttpServer
-import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.fxml.FXML
 import javafx.scene.control.Button
@@ -43,9 +42,6 @@ class MainController {
     lateinit var serverStatusCircle: Circle
     @FXML
     lateinit var serverStatusCirclePulse: Circle
-
-    val defaultBtnHeight = SimpleIntegerProperty(20)
-
     private val serverStatusIndicator by lazy {
         StatusIndicator(serverStatusCircle, serverStatusCirclePulse)
     }
@@ -68,7 +64,6 @@ class MainController {
 
         printerStatusIndicator.startAnimation()
         serverStatusIndicator.startAnimation()
-        defaultBtnHeight.bind(changeSelectedPrinterBtn.heightProperty())
 
         updateSystemStatus()
     }
@@ -93,5 +88,11 @@ class MainController {
             changeSelectedPrinterBtn.text = "Selecionar"
             printExampleReceiptBtn.isVisible = false
         }
+    }
+
+    @FXML
+    private fun handleChangeSelectedPrinterBtnClick() {
+        PrinterSelectorController.showPrinterSelector()
+        updateSystemStatus()
     }
 }

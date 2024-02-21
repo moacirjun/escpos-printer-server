@@ -31,7 +31,7 @@ class HelloApplication : Application() {
             .build()
             .setGlobal()
 
-        val mainPage = FXMLLoader.load<VBox>(HelloApplication::class.java.getResource("main-view.fxml"))
+        val mainPage = loadView<VBox>("main-view.fxml")
 
         stage.apply {
             title = "Gerenciador de impressoras ESC/POS"
@@ -45,3 +45,7 @@ class HelloApplication : Application() {
         }
     }
 }
+
+fun viewLoader(view: String) = FXMLLoader(HelloApplication::class.java.getResource(view))
+
+fun <T> loadView(view: String): T = viewLoader(view).load()

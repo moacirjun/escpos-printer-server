@@ -10,8 +10,8 @@ import javafx.util.Duration
 class StatusIndicator(private val circle: Circle, private val pulseCircle: Circle) {
     private var fillTransition: FillTransition
     private var scaleTransition: ScaleTransition = ScaleTransition(ANIMATION_DURATION, pulseCircle).apply {
-        byX = 1.2
-        byY = 1.2
+        byX = 1.1
+        byY = 1.1
         cycleCount = ScaleTransition.INDEFINITE
         interpolator = Interpolator.EASE_OUT
     }
@@ -29,12 +29,16 @@ class StatusIndicator(private val circle: Circle, private val pulseCircle: Circl
         }
 
     fun startAnimation() {
+        pulseCircle.scaleX = 1.0
+        pulseCircle.scaleY = 1.0
         scaleTransition.play()
         fillTransition.play()
     }
 
     fun stopAnimation() {
         scaleTransition.stop()
+        pulseCircle.scaleX = 1.0
+        pulseCircle.scaleY = 1.0
         fillTransition.stop()
     }
 
@@ -55,10 +59,10 @@ class StatusIndicator(private val circle: Circle, private val pulseCircle: Circl
     companion object {
         private val SUCCESS_COLOR = Color.rgb(60, 179, 113)
         private val SUCCESS_COLOR_40 = Color.rgb(60, 179, 113, 0.4)
-        private val SUCCESS_COLOR_10 = Color.rgb(60, 179, 113, 0.1)
+        private val SUCCESS_COLOR_10 = Color.rgb(60, 179, 113, 0.01)
         private val ERROR_COLOR = Color.rgb(255, 0, 0)
         private val ERROR_COLOR_40 = Color.rgb(255, 0, 0, 0.4)
-        private val ERROR_COLOR_10 = Color.rgb(255, 0, 0, 0.1)
-        private val ANIMATION_DURATION = Duration.seconds(1.0)
+        private val ERROR_COLOR_10 = Color.rgb(255, 0, 0, 0.01)
+        private val ANIMATION_DURATION = Duration.seconds(1.5)
     }
 }
