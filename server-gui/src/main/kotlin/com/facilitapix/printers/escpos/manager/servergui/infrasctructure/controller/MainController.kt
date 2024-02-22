@@ -3,11 +3,14 @@ package com.facilitapix.printers.escpos.manager.servergui.infrasctructure.contro
 import com.facilitapix.printers.escpos.manager.servergui.domain.SystemStatus
 import com.facilitapix.printers.escpos.manager.servergui.domain.printer.PrinterConnector
 import com.facilitapix.printers.escpos.manager.servergui.infrasctructure.server.HttpServer
+import com.facilitapix.printers.escpos.manager.servergui.loadView
 import javafx.beans.property.SimpleStringProperty
 import javafx.fxml.FXML
-import javafx.scene.control.Alert
+import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.control.Label
+import javafx.scene.layout.VBox
+import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 
 
@@ -56,17 +59,14 @@ class MainController {
         const val NO_PRINTER_CONFIGURED_MESSAGE = "Nenhuma impressora selecionada"
         const val SERVER_NOT_RUNNING_MESSAGE = "Offline"
         const val SERVER_RUNNING_MESSAGE = "Online"
+
+        fun instantiateScene() = Scene(loadView<VBox>("main-view.fxml")).apply {
+            fill = Color.TRANSPARENT
+        }
     }
 
     @FXML
     private fun initialize() {
-        HttpServer.start()
-        if (PrinterConnector.getPersistedPrinter() == null) {
-            PrinterSelectorController.showPrinterSelector()
-        } else {
-            connectToConfiguredPrinter()
-        }
-
         selectedPrinterLbl.textProperty().bind(systemStatus.selectedPrinter)
         serverStatusLbl.textProperty().bind(systemStatus.serverStatus)
 

@@ -62,3 +62,7 @@
 .status-label {
     -fx-font-size: 14px;
 }
+
+.bold {
+    -fx-font-weight: bold;
+}

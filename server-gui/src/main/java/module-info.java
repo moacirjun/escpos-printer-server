@@ -24,6 +24,7 @@ module com.facilitapix.printers.escpos.manager.servergui {
     requires java.desktop;
     requires escpos.coffee;
     requires java.prefs;
+    requires com.dustinredmond.fxtrayicon;
 
     opens com.facilitapix.printers.escpos.manager.servergui to javafx.fxml, kotlin.stdlib, kotlinx.coroutines.core;
     opens com.facilitapix.printers.escpos.manager.servergui.infrasctructure.controller to javafx.fxml, kotlin.stdlib, kotlinx.coroutines.core;

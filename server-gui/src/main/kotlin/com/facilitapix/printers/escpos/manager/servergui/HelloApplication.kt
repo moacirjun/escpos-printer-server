@@ -1,6 +1,8 @@
 package com.facilitapix.printers.escpos.manager.servergui
 
+import com.dustinredmond.fxtrayicon.FXTrayIcon
 import com.facilitapix.printers.escpos.manager.servergui.domain.printer.PrinterConnector
+import com.facilitapix.printers.escpos.manager.servergui.infrasctructure.controller.MainController
 import com.facilitapix.printers.escpos.manager.servergui.infrasctructure.controller.PrinterSelectorController
 import com.facilitapix.printers.escpos.manager.servergui.infrasctructure.server.HttpServer
 import io.github.palexdev.materialfx.theming.JavaFXThemes
@@ -8,11 +10,11 @@ import io.github.palexdev.materialfx.theming.MaterialFXStylesheets
 import io.github.palexdev.materialfx.theming.UserAgentBuilder
 import javafx.application.Application
 import javafx.fxml.FXMLLoader
-import javafx.scene.Scene
-import javafx.scene.layout.VBox
-import javafx.scene.paint.Color
+import javafx.scene.control.Alert
+import javafx.scene.control.MenuItem
 import javafx.stage.Stage
 import javafx.stage.StageStyle
+import kotlin.system.exitProcess
 
 
 fun main(args: Array<String>) {
@@ -21,6 +23,66 @@ fun main(args: Array<String>) {
 
 class HelloApplication : Application() {
     override fun start(stage: Stage) {
+        configureAppTheme()
+        HttpServer.start()
+
+        FXTrayIcon(stage, javaClass.getResource("facilita-pix-logo.png")).apply {
+            show()
+            setTrayIconTooltip("Facilita Pix Server Manager")
+            addMenuItem(
+                MenuItem("Abrir Gerenciador").apply {
+                    styleClass.add("bold")
+                    setOnAction {
+                        stage.show()
+                    }
+                }
+            )
+            addSeparator()
+            addMenuItem(
+                MenuItem("Encerrar").apply {
+                    setOnAction {
+                        stage.close()
+                        hide()
+                        HttpServer.stop()
+                        exitProcess(0)
+                    }
+                }
+            )
+        }
+
+        stage.apply {
+            title = "Gerenciador de impressoras ESC/POS"
+            initStyle(StageStyle.UTILITY)
+            scene = MainController.instantiateScene()
+
+            show()
+            sizeToScene()
+        }
+
+        if (hasPrinterConfigured()) {
+            connectToConfiguredPrinter()
+        } else {
+            PrinterSelectorController.showPrinterSelector()
+        }
+    }
+
+    private fun hasPrinterConfigured() = PrinterConnector.getPersistedPrinter() != null
+
+    private fun connectToConfiguredPrinter() {
+        try {
+            PrinterConnector.connectToPersistedPrinter()
+        } catch (e: Exception) {
+            Alert(Alert.AlertType.ERROR).apply {
+                title = "Erro ao conectar com a impressora"
+                headerText = "Erro ao conectar com a impressora"
+                contentText = "Não foi possível conectar com a impressora ${PrinterConnector.getPersistedPrinter()}. " +
+                        "Verifique se a impressora está ligada e conectada ao computador."
+                showAndWait()
+            }
+        }
+    }
+
+    private fun configureAppTheme() {
         UserAgentBuilder.builder()
             .themes(JavaFXThemes.MODENA)
             .themes(MaterialFXStylesheets.forAssemble(true))
@@ -28,19 +90,6 @@ class HelloApplication : Application() {
             .setResolveAssets(true)
             .build()
             .setGlobal()
-
-        val mainPage = loadView<VBox>("main-view.fxml")
-
-        stage.apply {
-            title = "Gerenciador de impressoras ESC/POS"
-            initStyle(StageStyle.UTILITY)
-            scene = Scene(mainPage).apply {
-                fill = Color.TRANSPARENT
-            }
-
-            show()
-            sizeToScene()
-        }
     }
 }
 

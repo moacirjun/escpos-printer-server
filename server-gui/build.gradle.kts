@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.cli.common.isWindows
+
 val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
@@ -27,7 +29,7 @@ application {
 
 javafx {
     version = "17.0.6"
-    modules = listOf("javafx.controls", "javafx.fxml")
+    modules = listOf("javafx.controls", "javafx.swing", "javafx.fxml")
 }
 
 dependencies {
@@ -79,5 +81,12 @@ jlink {
         excludeProvides(
             mapOf("servicePattern" to "reactor.blockhound.*"),
         )
+    }
+    jpackage {
+        icon = "src/main/resources/facilita-pix-logo.ico"
+        if (isWindows) {
+            installerType = "msi"
+            installerOptions = listOf("--win-dir-chooser", "--win-menu", "--win-shortcut")
+        }
     }
 }
