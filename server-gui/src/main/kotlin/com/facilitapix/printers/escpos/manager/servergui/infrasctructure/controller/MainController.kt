@@ -98,21 +98,6 @@ class MainController {
         }
     }
 
-    private fun connectToConfiguredPrinter() {
-        try {
-            PrinterConnector.connectToPersistedPrinter()
-        } catch (e: Exception) {
-            printerStatusIndicator.error()
-            Alert(Alert.AlertType.ERROR).apply {
-                title = "Erro ao conectar com a impressora"
-                headerText = "Erro ao conectar com a impressora"
-                contentText = "Não foi possível conectar com a impressora ${PrinterConnector.getPersistedPrinter()}. " +
-                        "Verifique se a impressora está ligada e conectada ao computador."
-                showAndWait()
-            }
-        }
-    }
-
     @FXML
     private fun handleChangeSelectedPrinterBtnClick() {
         PrinterSelectorController.showPrinterSelector()
