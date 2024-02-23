@@ -70,7 +70,7 @@ tasks {
 }
 
 jlink {
-    imageZip = project.file("${buildDir}/distributions/app-server.zip")
+    imageZip = project.file("${layout.buildDirectory}/distributions/app-server.zip")
     addOptions("--strip-debug", "--compress=2", "--no-header-files", "--no-man-pages")
     launcher {
         name = "FacilitaPIX Printers Interface"

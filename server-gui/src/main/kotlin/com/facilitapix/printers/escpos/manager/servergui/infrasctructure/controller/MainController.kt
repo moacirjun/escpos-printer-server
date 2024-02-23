@@ -1,17 +1,23 @@
 package com.facilitapix.printers.escpos.manager.servergui.infrasctructure.controller
 
+import com.facilitapix.printers.escpos.manager.servergui.HelloApplication
 import com.facilitapix.printers.escpos.manager.servergui.domain.SystemStatus
 import com.facilitapix.printers.escpos.manager.servergui.domain.printer.PrinterConnector
+import com.facilitapix.printers.escpos.manager.servergui.domain.printer.PrinterService
 import com.facilitapix.printers.escpos.manager.servergui.infrasctructure.server.HttpServer
 import com.facilitapix.printers.escpos.manager.servergui.loadView
 import javafx.beans.property.SimpleStringProperty
 import javafx.fxml.FXML
 import javafx.scene.Scene
+import javafx.scene.control.Alert
 import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class MainController {
@@ -36,6 +42,7 @@ class MainController {
 
     @FXML
     lateinit var printerStatusCircle: Circle
+
     @FXML
     lateinit var printerStatusCirclePulse: Circle
     private val printerStatusIndicator by lazy {
@@ -44,6 +51,7 @@ class MainController {
 
     @FXML
     lateinit var serverStatusCircle: Circle
+
     @FXML
     lateinit var serverStatusCirclePulse: Circle
     private val serverStatusIndicator by lazy {
@@ -54,6 +62,8 @@ class MainController {
         serverStatus = SimpleStringProperty("Iniciando integrador..."),
         selectedPrinter = SimpleStringProperty("Iniciando integrador...")
     )
+
+    private val printerService = PrinterService()
 
     companion object {
         const val NO_PRINTER_CONFIGURED_MESSAGE = "Nenhuma impressora selecionada"
@@ -77,12 +87,13 @@ class MainController {
     }
 
     private fun updateSystemStatus() {
-        systemStatus.serverStatus.value = if (HttpServer.isRunning()) {
+        restartServerBtn.isDisable = false
+        if (HttpServer.isRunning()) {
             serverStatusIndicator.success()
-            SERVER_RUNNING_MESSAGE
+            systemStatus.serverStatus.value = SERVER_RUNNING_MESSAGE
         } else {
             serverStatusIndicator.error()
-            SERVER_NOT_RUNNING_MESSAGE
+            systemStatus.serverStatus.value = SERVER_NOT_RUNNING_MESSAGE
         }
 
         systemStatus.selectedPrinter.value = PrinterConnector.getSelectedPrinter() ?: NO_PRINTER_CONFIGURED_MESSAGE
@@ -90,6 +101,7 @@ class MainController {
             printerStatusIndicator.success()
             changeSelectedPrinterBtn.text = "Alterar"
             printExampleReceiptBtn.isVisible = true
+            printExampleReceiptBtn.isDisable = false
         } else {
             systemStatus.selectedPrinter.value = NO_PRINTER_CONFIGURED_MESSAGE
             printerStatusIndicator.error()
@@ -102,5 +114,49 @@ class MainController {
     private fun handleChangeSelectedPrinterBtnClick() {
         PrinterSelectorController.showPrinterSelector()
         updateSystemStatus()
+    }
+
+    @FXML
+    private fun handlePrintExampleReceiptBtnClick() {
+        printExampleReceiptBtn.isDisable = true
+        systemStatus.serverStatus.value = "Imprimindo recibo de exemplo..."
+
+        HelloApplication.scope.launch(Dispatchers.Main) {
+            try {
+                withContext(Dispatchers.IO) {
+                    printerService.printTestReceipt()
+                }
+            } catch (e: Exception) {
+                Alert(
+                    Alert.AlertType.ERROR,
+                    "Erro ao imprimir recibo de exemplo. Verifique a conexão com a impressora e tente novamente."
+                ).showAndWait()
+            } finally {
+                updateSystemStatus()
+            }
+        }
+    }
+
+    @FXML
+    private fun handleRestartServerBtnClick() {
+        restartServerBtn.isDisable = true
+        systemStatus.serverStatus.value = "Reiniciando servidor..."
+        serverStatusIndicator.hide()
+
+
+        HelloApplication.scope.launch(Dispatchers.Main) {
+            try {
+                withContext(Dispatchers.IO) {
+                    HttpServer.restart()
+                }
+            } catch (e: Exception) {
+                Alert(
+                    Alert.AlertType.ERROR,
+                    "Erro ao reiniciar servidor. Verifique a conexão com a internet e tente novamente."
+                ).showAndWait()
+            } finally {
+                updateSystemStatus()
+            }
+        }
     }
 }

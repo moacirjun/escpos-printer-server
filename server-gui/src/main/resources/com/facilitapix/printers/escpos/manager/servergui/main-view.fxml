@@ -36,7 +36,8 @@
                     <Circle fx:id="printerStatusCirclePulse" fill="mediumseagreen" radius="6.0"/>
                     <Circle fx:id="printerStatusCircle" fill="mediumseagreen" radius="6.0"/>
                 </StackPane>
-                <Label fx:id="selectedPrinterLbl" text="Nenhuma impressora selecionada" wrapText="true" styleClass="status-label"/>
+                <Label fx:id="selectedPrinterLbl" text="Nenhuma impressora selecionada" wrapText="true"
+                       styleClass="status-label"/>
                 <Pane HBox.hgrow="ALWAYS"/>
                 <MFXButton buttonType="RAISED"
                            styleClass="primary"
@@ -54,6 +55,7 @@
             <MFXButton styleClass="outline-button"
                        fx:id="printExampleReceiptBtn"
                        mnemonicParsing="false"
+                       onAction="#handlePrintExampleReceiptBtnClick"
                        text="Imprimir Teste">
                 <graphic>
                     <ImageView preserveRatio="true" fitHeight="15">
@@ -85,6 +87,7 @@
                            styleClass="primary"
                            fx:id="restartServerBtn"
                            mnemonicParsing="false"
+                           onAction="#handleRestartServerBtnClick"
                            text="Reiniciar">
                     <graphic>
                         <ImageView preserveRatio="true" fitHeight="20">

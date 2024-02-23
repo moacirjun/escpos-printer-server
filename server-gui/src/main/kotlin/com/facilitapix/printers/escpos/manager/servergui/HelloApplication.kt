@@ -14,6 +14,8 @@ import javafx.scene.control.Alert
 import javafx.scene.control.MenuItem
 import javafx.stage.Stage
 import javafx.stage.StageStyle
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 import kotlin.system.exitProcess
 
 
@@ -22,6 +24,16 @@ fun main(args: Array<String>) {
 }
 
 class HelloApplication : Application() {
+
+    companion object {
+        val scope = MainScope()
+    }
+
+    override fun stop() {
+        super.stop()
+        scope.cancel()
+    }
+
     override fun start(stage: Stage) {
         configureAppTheme()
         HttpServer.start()

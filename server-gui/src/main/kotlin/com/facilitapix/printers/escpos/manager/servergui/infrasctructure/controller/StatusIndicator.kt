@@ -56,6 +56,12 @@ class StatusIndicator(private val circle: Circle, private val pulseCircle: Circl
         startAnimation()
     }
 
+    fun hide() {
+        stopAnimation()
+        circle.fill = Color.TRANSPARENT
+        pulseCircle.fill = Color.TRANSPARENT
+    }
+
     companion object {
         private val SUCCESS_COLOR = Color.rgb(60, 179, 113)
         private val SUCCESS_COLOR_40 = Color.rgb(60, 179, 113, 0.4)

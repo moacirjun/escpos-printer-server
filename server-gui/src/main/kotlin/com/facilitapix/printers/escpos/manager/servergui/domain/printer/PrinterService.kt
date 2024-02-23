@@ -73,4 +73,22 @@ class PrinterService {
         PrinterConnector.connectToPrinter(printServiceName)
         //TODO: handle error - Improve the return to the client
     }
+
+    fun printTestReceipt() {
+        try {
+            printOrderReceipt(
+                OrderReceipt(
+                    orderId = "123456",
+                    customerName = "João da Silva",
+                    amount = "R$ 123,45",
+                    qrCode = "https://facilitapix.com",
+                    orderDate = "01/01/2021",
+                    status = "Aguardando pagamento"
+                )
+            )
+        } catch (e: Exception) {
+            logger.error("Error while printing test receipt. cause: ${e.message}", e)
+            throw e
+        }
+    }
 }
