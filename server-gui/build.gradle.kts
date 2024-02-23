@@ -37,6 +37,11 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0-RC2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:1.8.0-RC2")
 
+//    // Ignite + Dagger
+//    implementation("com.gluonhq:ignite-dagger:1.2.2")
+//    implementation("com.google.dagger:dagger:2.50")
+//    annotationProcessor("com.google.dagger:dagger-compiler:2.50")
+
     implementation("com.dustinredmond.fxtrayicon:FXTrayIcon:4.0.1")
     implementation("com.github.anastaciocintra:escpos-coffee:4.1.0")
     implementation("io.github.palexdev:materialfx:11.17.0")
@@ -47,8 +52,7 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
     implementation("io.ktor:ktor-serialization-jackson:$ktor_version")
     implementation("io.ktor:ktor-server-cors:$ktor_version")
-    implementation("io.ktor:ktor-client-core:$ktor_version") // Verifique a versão mais recente
-    implementation("io.ktor:ktor-client-cio:$ktor_version")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
     // Testing
@@ -75,7 +79,7 @@ jlink {
     imageZip = project.file("${layout.buildDirectory}/distributions/app-server.zip")
     addOptions("--strip-debug", "--compress=2", "--no-header-files", "--no-man-pages")
     launcher {
-        name = "FacilitaPIX Printers Interface"
+        name = "FacilitaPrinter"
     }
     addExtraDependencies("javafx", "jackson", "kotlinx")
     forceMerge("kotlinx-coroutines-core", "kotlinx-coroutines-javafx")

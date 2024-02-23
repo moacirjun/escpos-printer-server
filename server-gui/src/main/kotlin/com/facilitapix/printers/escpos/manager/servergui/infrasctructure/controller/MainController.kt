@@ -6,10 +6,6 @@ import com.facilitapix.printers.escpos.manager.servergui.domain.printer.PrinterC
 import com.facilitapix.printers.escpos.manager.servergui.domain.printer.PrinterService
 import com.facilitapix.printers.escpos.manager.servergui.infrasctructure.server.HttpServer
 import com.facilitapix.printers.escpos.manager.servergui.loadView
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import javafx.beans.property.SimpleStringProperty
 import javafx.fxml.FXML
 import javafx.scene.Scene
@@ -22,8 +18,16 @@ import javafx.scene.shape.Circle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 
 
+/*
+TODO:
+- [ ] Splash screen enquanto sobe o servidor e conecta com a impressora
+- [ ] Tray icon dinâmico de acordo com o status do servidor e da impressora
+ */
 class MainController {
 
     @FXML
@@ -128,16 +132,20 @@ class MainController {
         }
     }
 
-    private suspend fun isServerRunning(): Boolean {
-        val client = HttpClient(CIO)
+    private fun isServerRunning(): Boolean {
+        val client = OkHttpClient()
+        val request = Request.Builder()
+            .url("http://localhost:8087")
+            .build()
+
         return try {
-            // Tenta fazer uma requisição GET ao servidor
-            val response: HttpResponse = client.get("http://localhost:8087")
-            response.status.value in 200..299
+            // Executa a requisição e captura a resposta
+            val response: Response = client.newCall(request).execute()
+            response.isSuccessful // Retorna true se o status for 200-299
         } catch (e: Exception) {
             false // Se houver uma exceção, assume que o servidor não está rodando
         } finally {
-            client.close()
+            client.dispatcher.executorService.shutdown() // Encerra o cliente OkHttp
         }
     }
 
