@@ -99,7 +99,8 @@
             <MFXButton styleClass="outline-button"
                        fx:id="fetchServerStatus"
                        mnemonicParsing="false"
-                       text="Verificar Conexão">
+                       text="Verificar Conexão"
+                       onAction="#handleFetchServerStatusBtnClick">
                 <graphic>
                     <ImageView preserveRatio="true" fitHeight="15">
                         <Image url="@images/arrow-path-primary.png"/>

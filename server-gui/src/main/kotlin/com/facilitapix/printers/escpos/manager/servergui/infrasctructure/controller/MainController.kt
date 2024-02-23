@@ -6,6 +6,10 @@ import com.facilitapix.printers.escpos.manager.servergui.domain.printer.PrinterC
 import com.facilitapix.printers.escpos.manager.servergui.domain.printer.PrinterService
 import com.facilitapix.printers.escpos.manager.servergui.infrasctructure.server.HttpServer
 import com.facilitapix.printers.escpos.manager.servergui.loadView
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import javafx.beans.property.SimpleStringProperty
 import javafx.fxml.FXML
 import javafx.scene.Scene
@@ -83,19 +87,33 @@ class MainController {
         printerStatusIndicator.startAnimation()
         serverStatusIndicator.startAnimation()
 
-        updateSystemStatus()
+        updatePrinterStatus()
+        updateServerStatus()
     }
 
-    private fun updateSystemStatus() {
-        restartServerBtn.isDisable = false
-        if (HttpServer.isRunning()) {
-            serverStatusIndicator.success()
-            systemStatus.serverStatus.value = SERVER_RUNNING_MESSAGE
-        } else {
-            serverStatusIndicator.error()
-            systemStatus.serverStatus.value = SERVER_NOT_RUNNING_MESSAGE
-        }
+    private fun updateServerStatus() {
+        HelloApplication.scope.launch(Dispatchers.Main) {
+            fetchServerStatus.isDisable = true
+            systemStatus.serverStatus.value = "Buscando status do servidor..."
+            serverStatusIndicator.hide()
 
+            val serverRunning = withContext(Dispatchers.IO) {
+                isServerRunning()
+            }
+
+            fetchServerStatus.isDisable = false
+            restartServerBtn.isDisable = false
+            if (serverRunning) {
+                systemStatus.serverStatus.value = SERVER_RUNNING_MESSAGE
+                serverStatusIndicator.success()
+            } else {
+                systemStatus.serverStatus.value = SERVER_NOT_RUNNING_MESSAGE
+                serverStatusIndicator.error()
+            }
+        }
+    }
+
+    private fun updatePrinterStatus() {
         systemStatus.selectedPrinter.value = PrinterConnector.getSelectedPrinter() ?: NO_PRINTER_CONFIGURED_MESSAGE
         if (systemStatus.selectedPrinter.value != NO_PRINTER_CONFIGURED_MESSAGE) {
             printerStatusIndicator.success()
@@ -110,10 +128,23 @@ class MainController {
         }
     }
 
+    private suspend fun isServerRunning(): Boolean {
+        val client = HttpClient(CIO)
+        return try {
+            // Tenta fazer uma requisição GET ao servidor
+            val response: HttpResponse = client.get("http://localhost:8087")
+            response.status.value in 200..299
+        } catch (e: Exception) {
+            false // Se houver uma exceção, assume que o servidor não está rodando
+        } finally {
+            client.close()
+        }
+    }
+
     @FXML
     private fun handleChangeSelectedPrinterBtnClick() {
         PrinterSelectorController.showPrinterSelector()
-        updateSystemStatus()
+        updatePrinterStatus()
     }
 
     @FXML
@@ -132,7 +163,7 @@ class MainController {
                     "Erro ao imprimir recibo de exemplo. Verifique a conexão com a impressora e tente novamente."
                 ).showAndWait()
             } finally {
-                updateSystemStatus()
+                updatePrinterStatus()
             }
         }
     }
@@ -140,9 +171,9 @@ class MainController {
     @FXML
     private fun handleRestartServerBtnClick() {
         restartServerBtn.isDisable = true
+        fetchServerStatus.isDisable = true
         systemStatus.serverStatus.value = "Reiniciando servidor..."
         serverStatusIndicator.hide()
-
 
         HelloApplication.scope.launch(Dispatchers.Main) {
             try {
@@ -155,8 +186,13 @@ class MainController {
                     "Erro ao reiniciar servidor. Verifique a conexão com a internet e tente novamente."
                 ).showAndWait()
             } finally {
-                updateSystemStatus()
+                updateServerStatus()
             }
         }
+    }
+
+    @FXML
+    private fun handleFetchServerStatusBtnClick() {
+        updateServerStatus()
     }
 }
