@@ -81,10 +81,10 @@ object PrinterConnector: PrinterConnectorInterface {
         .toList()
         .toMutableList()
         .apply {
-            addAll(
-                //fake printers
-                listOf("Printer 1", "Printer 2", "Printer 3", "Printer 4", "Printer 5")
-            )
+//            addAll(
+//                //fake printers
+//                listOf("Printer 1", "Printer 2", "Printer 3", "Printer 4", "Printer 5")
+//            )
         }
 
     override fun connectToPersistedPrinter() {

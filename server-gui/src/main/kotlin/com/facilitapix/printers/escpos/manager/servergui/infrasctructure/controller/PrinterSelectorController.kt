@@ -34,7 +34,7 @@ class PrinterSelectorController {
             (printerListView.scene.window as Stage).close()
         }
 
-        printerListView.items.addAll()
+        printerListView.items.addAll(printers)
         printerListView.selectionModel.select(currentPrinter)
         printerListView.setCellFactory { _ ->
             object : ListCell<String>() {
