@@ -13,7 +13,6 @@ import javafx.fxml.FXMLLoader
 import javafx.scene.control.Alert
 import javafx.scene.control.MenuItem
 import javafx.stage.Stage
-import javafx.stage.StageStyle
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlin.system.exitProcess
@@ -45,7 +44,12 @@ class HelloApplication : Application() {
                 MenuItem("Abrir Gerenciador").apply {
                     styleClass.add("bold")
                     setOnAction {
+                        if (stage.isIconified) {
+                            stage.isIconified = false
+                        }
                         stage.show()
+                        stage.toFront()
+                        stage.requestFocus()
                     }
                 }
             )
@@ -64,8 +68,8 @@ class HelloApplication : Application() {
 
         stage.apply {
             title = "Gerenciador de impressoras ESC/POS"
-            initStyle(StageStyle.UTILITY)
             scene = MainController.instantiateScene()
+//            icons.add(javafx.scene.image.Image(javaClass.getResource("facilita-pix-logo.png")?.toExternalForm() ?: ""))
 
             show()
             sizeToScene()
