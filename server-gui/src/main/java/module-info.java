@@ -29,6 +29,7 @@ module com.facilitapix.printers.escpos.manager.servergui {
 
     opens com.facilitapix.printers.escpos.manager.servergui to javafx.fxml, kotlin.stdlib, kotlinx.coroutines.core;
     opens com.facilitapix.printers.escpos.manager.servergui.infrasctructure.controller to javafx.fxml, kotlin.stdlib, kotlinx.coroutines.core;
+    opens com.facilitapix.printers.escpos.manager.servergui.domain.server to javafx.fxml, kotlin.stdlib, kotlinx.coroutines.core, kotlin.reflect, com.fasterxml.jackson.databind;
     exports com.facilitapix.printers.escpos.manager.servergui;
     exports com.facilitapix.printers.escpos.manager.servergui.infrasctructure.server;
     exports com.facilitapix.printers.escpos.manager.servergui.infrasctructure.controller;

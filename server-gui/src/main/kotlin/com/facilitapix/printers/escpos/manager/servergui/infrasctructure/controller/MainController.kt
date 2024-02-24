@@ -158,7 +158,7 @@ class MainController {
     @FXML
     private fun handlePrintExampleReceiptBtnClick() {
         printExampleReceiptBtn.isDisable = true
-        systemStatus.serverStatus.value = "Imprimindo recibo de exemplo..."
+        systemStatus.selectedPrinter.value = "Imprimindo recibo de exemplo..."
 
         HelloApplication.scope.launch(Dispatchers.Main) {
             try {

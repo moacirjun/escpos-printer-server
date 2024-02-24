@@ -31,7 +31,6 @@ class PrinterSelectorController {
                 "Não foi encontrada nenhuma impressora conectada ao sistema. " +
                         "Verifique se a impressora está conectada e ligada."
             )
-            (printerListView.scene.window as Stage).close()
         }
 
         printerListView.items.addAll(printers)
