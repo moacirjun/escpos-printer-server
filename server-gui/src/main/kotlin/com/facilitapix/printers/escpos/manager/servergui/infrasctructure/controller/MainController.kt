@@ -72,6 +72,8 @@ class MainController {
     )
 
     private val printerService = PrinterService()
+    private val currentSelectedPrinter
+        get() = PrinterConnector.getSelectedPrinter()
 
     companion object {
         const val NO_PRINTER_CONFIGURED_MESSAGE = "Nenhuma impressora selecionada"
@@ -85,6 +87,12 @@ class MainController {
 
     @FXML
     private fun initialize() {
+        if (currentSelectedPrinter != null) {
+            connectToConfiguredPrinter()
+        } else {
+            PrinterSelectorController.showPrinterSelector()
+        }
+
         selectedPrinterLbl.textProperty().bind(systemStatus.selectedPrinter)
         serverStatusLbl.textProperty().bind(systemStatus.serverStatus)
 
@@ -93,6 +101,22 @@ class MainController {
 
         updatePrinterStatus()
         updateServerStatus()
+    }
+
+    private fun connectToConfiguredPrinter() {
+        try {
+            PrinterConnector.connectToPersistedPrinter()
+        } catch (e: Exception) {
+            //TODO: remover esse modal. Deixar apenas o ícone de status da impressora com status de erro
+            // e uma mensagem de error numa lable de descricao dealhada do status da impressora
+            Alert(Alert.AlertType.ERROR).apply {
+                title = "Erro ao conectar com a impressora"
+                headerText = "Erro ao conectar com a impressora"
+                contentText = "Não foi possível conectar com a impressora ${PrinterConnector.getPersistedPrinter()}. " +
+                        "Verifique se a impressora está ligada e conectada ao computador."
+                showAndWait()
+            }
+        }
     }
 
     private fun updateServerStatus() {
@@ -118,7 +142,7 @@ class MainController {
     }
 
     private fun updatePrinterStatus() {
-        systemStatus.selectedPrinter.value = PrinterConnector.getSelectedPrinter() ?: NO_PRINTER_CONFIGURED_MESSAGE
+        systemStatus.selectedPrinter.value = currentSelectedPrinter ?: NO_PRINTER_CONFIGURED_MESSAGE
         if (systemStatus.selectedPrinter.value != NO_PRINTER_CONFIGURED_MESSAGE) {
             printerStatusIndicator.success()
             changeSelectedPrinterBtn.text = "Alterar"
