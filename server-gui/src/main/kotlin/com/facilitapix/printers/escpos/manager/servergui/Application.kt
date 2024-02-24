@@ -6,23 +6,25 @@ import com.facilitapix.printers.escpos.manager.servergui.infrasctructure.server.
 import io.github.palexdev.materialfx.theming.JavaFXThemes
 import io.github.palexdev.materialfx.theming.MaterialFXStylesheets
 import io.github.palexdev.materialfx.theming.UserAgentBuilder
-import javafx.application.Application
 import javafx.fxml.FXMLLoader
 import javafx.scene.control.MenuItem
 import javafx.stage.Stage
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlin.system.exitProcess
-
+import javafx.application.Application as JavafxApplication
 
 fun main(args: Array<String>) {
-    Application.launch(HelloApplication::class.java, *args)
+    JavafxApplication.launch(Application::class.java, *args)
 }
 
-class HelloApplication : Application() {
+class Application : JavafxApplication() {
 
     companion object {
         val scope = MainScope()
+
+        var isDevModeEnabled: Boolean = false
+            private set
     }
 
     override fun stop() {
@@ -31,6 +33,8 @@ class HelloApplication : Application() {
     }
 
     override fun start(stage: Stage) {
+        isDevModeEnabled = "--devMode=true" in parameters.raw
+
         configureAppTheme()
         HttpServer.start()
 
@@ -83,6 +87,6 @@ class HelloApplication : Application() {
     }
 }
 
-fun viewLoader(view: String) = FXMLLoader(HelloApplication::class.java.getResource(view))
+fun viewLoader(view: String) = FXMLLoader(Application::class.java.getResource(view))
 
 fun <T> loadView(view: String): T = viewLoader(view).load()

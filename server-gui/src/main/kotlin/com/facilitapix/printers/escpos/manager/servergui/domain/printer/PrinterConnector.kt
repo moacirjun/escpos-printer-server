@@ -1,5 +1,6 @@
 package com.facilitapix.printers.escpos.manager.servergui.domain.printer
 
+import com.facilitapix.printers.escpos.manager.servergui.Application
 import com.github.anastaciocintra.escpos.EscPos
 import com.github.anastaciocintra.output.PrinterOutputStream
 import java.io.FileOutputStream
@@ -7,7 +8,7 @@ import java.io.OutputStream
 import java.util.prefs.Preferences
 import javax.print.PrintService
 
-object PrinterConnector: PrinterConnectorInterface {
+object PrinterConnector : PrinterConnectorInterface {
 
     private var printService: PrintService? = null
 
@@ -21,6 +22,12 @@ object PrinterConnector: PrinterConnectorInterface {
     private const val PREFERENCE_KEY = "printerServiceName"
 
     override fun connectToPrinter(printServiceName: String) {
+        if (Application.isDevModeEnabled && "Testing Printer " in printServiceName) {
+            connectToFile("testing.bin")
+            preferences.put(PREFERENCE_KEY, printServiceName)
+            return
+        }
+
         if (!getAllPrinters().contains(printServiceName)) {
             throw IllegalArgumentException("Printer $printServiceName not found")
         }
@@ -76,16 +83,21 @@ object PrinterConnector: PrinterConnectorInterface {
         throw IllegalStateException("No output stream available. Did you forget to call selectPrinter or selectFile?")
     }
 
-    override fun getAllPrinters(): List<String> = PrinterOutputStream
-        .getListPrintServicesNames()
-        .toList()
-        .toMutableList()
-        .apply {
-//            addAll(
-//                //fake printers
-//                listOf("Printer 1", "Printer 2", "Printer 3", "Printer 4", "Printer 5")
-//            )
-        }
+    override fun getAllPrinters(): List<String> =
+        PrinterOutputStream
+            .getListPrintServicesNames()
+            .toList()
+            .apply {
+                if (Application.isDevModeEnabled) {
+                    toMutableList().apply {
+                        add("Testing Printer 1")
+                        add("Testing Printer 2")
+                        add("Testing Printer 3")
+                        add("Testing Printer 4")
+                        add("Testing Printer 5")
+                    }
+                }
+            }
 
     override fun connectToPersistedPrinter() {
         getPersistedPrinter()?.let {

@@ -1,6 +1,6 @@
 package com.facilitapix.printers.escpos.manager.servergui.infrasctructure.controller
 
-import com.facilitapix.printers.escpos.manager.servergui.HelloApplication
+import com.facilitapix.printers.escpos.manager.servergui.Application
 import com.facilitapix.printers.escpos.manager.servergui.domain.SystemStatus
 import com.facilitapix.printers.escpos.manager.servergui.domain.printer.PrinterConnector
 import com.facilitapix.printers.escpos.manager.servergui.domain.printer.PrinterService
@@ -72,8 +72,9 @@ class MainController {
     )
 
     private val printerService = PrinterService()
+
     private val currentSelectedPrinter
-        get() = PrinterConnector.getSelectedPrinter()
+        get() = PrinterConnector.getPersistedPrinter()
 
     companion object {
         const val NO_PRINTER_CONFIGURED_MESSAGE = "Nenhuma impressora selecionada"
@@ -120,7 +121,7 @@ class MainController {
     }
 
     private fun updateServerStatus() {
-        HelloApplication.scope.launch(Dispatchers.Main) {
+        Application.scope.launch(Dispatchers.Main) {
             fetchServerStatus.isDisable = true
             systemStatus.serverStatus.value = "Buscando status do servidor..."
             serverStatusIndicator.hide()
@@ -184,7 +185,7 @@ class MainController {
         printExampleReceiptBtn.isDisable = true
         systemStatus.selectedPrinter.value = "Imprimindo recibo de exemplo..."
 
-        HelloApplication.scope.launch(Dispatchers.Main) {
+        Application.scope.launch(Dispatchers.Main) {
             try {
                 withContext(Dispatchers.IO) {
                     printerService.printTestReceipt()
@@ -207,7 +208,7 @@ class MainController {
         systemStatus.serverStatus.value = "Reiniciando servidor..."
         serverStatusIndicator.hide()
 
-        HelloApplication.scope.launch(Dispatchers.Main) {
+        Application.scope.launch(Dispatchers.Main) {
             try {
                 withContext(Dispatchers.IO) {
                     HttpServer.restart()

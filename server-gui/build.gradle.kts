@@ -21,7 +21,7 @@ repositories {
 
 application {
     mainModule.set("com.facilitapix.printers.escpos.manager.servergui")
-    mainClass.set("com.facilitapix.printers.escpos.manager.servergui.HelloApplication")
+    mainClass.set("com.facilitapix.printers.escpos.manager.servergui.Application")
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
@@ -67,12 +67,17 @@ kotlin {
 tasks {
     jar {
         manifest {
-            attributes["Main-Class"] = "com.facilitapix.printers.escpos.manager.servergui.HelloApplication"
+            attributes["Main-Class"] = "com.facilitapix.printers.escpos.manager.servergui.Application"
         }
     }
     jlinkZip {
         group = "distribution"
     }
+}
+
+tasks.named<JavaExec>("run") {
+    // Usa uma propriedade de projeto para definir o modo de desenvolvimento
+    args = listOf("--devMode=${project.findProperty("devMode") ?: "false"}")
 }
 
 jlink {
