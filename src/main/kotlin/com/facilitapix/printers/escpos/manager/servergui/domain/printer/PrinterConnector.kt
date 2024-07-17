@@ -3,6 +3,7 @@ package com.facilitapix.printers.escpos.manager.servergui.domain.printer
 import com.facilitapix.printers.escpos.manager.servergui.Application
 import com.github.anastaciocintra.escpos.EscPos
 import com.github.anastaciocintra.output.PrinterOutputStream
+import javafx.beans.property.SimpleStringProperty
 import java.io.FileOutputStream
 import java.io.OutputStream
 import java.util.prefs.Preferences
@@ -14,12 +15,10 @@ object PrinterConnector : PrinterConnectorInterface {
 
     private var fileName: String? = null
 
-    private var outputStream: OutputStream? = null
-
-    private lateinit var escPos: EscPos
-
     private val preferences = Preferences.userRoot().node(javaClass.simpleName)
     private const val PREFERENCE_KEY = "printerServiceName"
+
+    val printerConnection = SimpleStringProperty()
 
     override fun connectToPrinter(printServiceName: String) {
         if (Application.isDevModeEnabled && "Testing Printer " in printServiceName) {
@@ -32,41 +31,24 @@ object PrinterConnector : PrinterConnectorInterface {
             throw IllegalArgumentException("Printer $printServiceName not found")
         }
 
-        outputStream?.let {
-            fileName = null
-            it.close()
-        }
-
-        connectByPrinterName(printServiceName)
+        fileName = null
+        printService = PrinterOutputStream.getPrintServiceByName(printServiceName)
+        printerConnection.value = PrinterConnectionStatus.CONNECTED.name
         preferences.put(PREFERENCE_KEY, printServiceName)
     }
 
     override fun connectToFile(file: String) {
-        outputStream?.let {
-            printService = null
-            it.close()
-        }
-
-        writeToFile(file)
+        fileName = file
+        printService = null
+        printerConnection.value = PrinterConnectionStatus.NOT_CONNECTED.name
         preferences.remove(PREFERENCE_KEY)
     }
 
-    private fun writeToFile(file: String) {
-        fileName = file
-        outputStream = FileOutputStream(file, true)
-        escPos = EscPos(outputStream)
-    }
-
-    private fun connectByPrinterName(printerName: String) {
-        printService = PrinterOutputStream.getPrintServiceByName(printerName)
-        outputStream = PrinterOutputStream(printService)
-        escPos = EscPos(outputStream)
-    }
-
     override fun connectAndRunCommands(commands: EscPos.() -> Unit) {
-        escPos = EscPos(instantiateNewOutputStream())
-        escPos.commands()
-        escPos.close()
+        EscPos(instantiateNewOutputStream()). apply {
+            commands()
+            close()
+        }
     }
 
     private fun instantiateNewOutputStream(): OutputStream {
@@ -119,5 +101,10 @@ object PrinterConnector : PrinterConnectorInterface {
         }
 
         return null
+    }
+
+    enum class PrinterConnectionStatus {
+        CONNECTED,
+        NOT_CONNECTED
     }
 }

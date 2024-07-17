@@ -93,10 +93,12 @@ class PrinterSelectorController {
 
         fun showPrinterSelector() {
             Stage().apply {
-                scene = Scene(loadView<VBox>("printer-selector.fxml"))
+                scene = Scene(instantiateView())
                 initModality(Modality.APPLICATION_MODAL)
                 showAndWait()
             }
         }
+
+        fun instantiateView() = loadView<VBox>("printer-selector.fxml")
     }
 }

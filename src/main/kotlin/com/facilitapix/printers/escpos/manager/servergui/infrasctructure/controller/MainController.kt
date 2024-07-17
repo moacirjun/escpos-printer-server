@@ -73,22 +73,21 @@ class MainController {
 
     private val printerService = PrinterService()
 
-    private val currentSelectedPrinter
-        get() = PrinterConnector.getPersistedPrinter()
-
     companion object {
-        const val NO_PRINTER_CONFIGURED_MESSAGE = "Nenhuma impressora selecionada"
-        const val SERVER_NOT_RUNNING_MESSAGE = "Offline"
-        const val SERVER_RUNNING_MESSAGE = "Online"
+        private const val NO_PRINTER_CONFIGURED_MESSAGE = "Nenhuma impressora selecionada"
+        private const val SERVER_NOT_RUNNING_MESSAGE = "Offline"
+        private const val SERVER_RUNNING_MESSAGE = "Online"
 
-        fun instantiateScene() = Scene(loadView<VBox>("main-view.fxml")).apply {
+        fun instantiateScene() = Scene(instantiateView()).apply {
             fill = Color.TRANSPARENT
         }
+
+        fun instantiateView() = loadView<VBox>("main-view.fxml")
     }
 
     @FXML
     private fun initialize() {
-        if (currentSelectedPrinter != null) {
+        if (PrinterConnector.getPersistedPrinter() != null) {
             connectToConfiguredPrinter()
         } else {
             PrinterSelectorController.showPrinterSelector()
@@ -143,7 +142,7 @@ class MainController {
     }
 
     private fun updatePrinterStatus() {
-        systemStatus.selectedPrinter.value = currentSelectedPrinter ?: NO_PRINTER_CONFIGURED_MESSAGE
+        systemStatus.selectedPrinter.value = PrinterConnector.getSelectedPrinter() ?: NO_PRINTER_CONFIGURED_MESSAGE
         if (systemStatus.selectedPrinter.value != NO_PRINTER_CONFIGURED_MESSAGE) {
             printerStatusIndicator.success()
             changeSelectedPrinterBtn.text = "Alterar"
