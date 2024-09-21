@@ -15,6 +15,8 @@ data class OrderReceipt(
     val customerName: String,
     @JsonProperty("amount")
     val amount: String,
+    @JsonProperty("store_name")
+    val storeName: String? = null,
 )
 
 /* JSON EXAMPLE

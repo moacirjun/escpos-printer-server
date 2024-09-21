@@ -2,7 +2,6 @@ module com.facilitapix.printers.escpos.manager.servergui {
     requires javafx.controls;
     requires javafx.fxml;
     requires MaterialFX;
-    requires kotlin.stdlib;
     requires transitive kotlinx.coroutines.core;
     requires transitive kotlinx.coroutines.javafx;
 
@@ -18,14 +17,16 @@ module com.facilitapix.printers.escpos.manager.servergui {
     requires io.ktor.server.core;
     requires io.ktor.server.content.negotiation;
     requires io.ktor.serialization.jackson;
-    requires com.fasterxml.jackson.databind;
     requires io.ktor.server.cors;
     requires io.ktor.http;
-    requires java.desktop;
     requires escpos.coffee;
     requires java.prefs;
     requires com.dustinredmond.fxtrayicon;
     requires okhttp3;
+    requires reflections;
+    requires com.fasterxml.jackson.kotlin;
+    requires com.fasterxml.jackson.databind;
+    requires kotlin.reflect;
 
     opens com.facilitapix.printers.escpos.manager.servergui to javafx.fxml, kotlin.stdlib, kotlinx.coroutines.core;
     opens com.facilitapix.printers.escpos.manager.servergui.infrasctructure.controller to javafx.fxml, kotlin.stdlib, kotlinx.coroutines.core;

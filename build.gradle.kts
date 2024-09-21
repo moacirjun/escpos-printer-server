@@ -33,6 +33,8 @@ javafx {
 }
 
 dependencies {
+    implementation("org.reflections:reflections:0.9.12")
+
     //coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0-RC2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:1.8.0-RC2")
@@ -58,6 +60,14 @@ dependencies {
     // Testing
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
+
+    // Dependências do Mockito
+    testImplementation("org.mockito:mockito-core:5.0.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.0.0")
+
+//    testImplementation("io.mockk:mockk-dsl-jvm:1.13.5")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
 }
 
 kotlin {
@@ -72,6 +82,9 @@ tasks {
     }
     jlinkZip {
         group = "distribution"
+    }
+    test {
+        useJUnitPlatform()
     }
 }
 

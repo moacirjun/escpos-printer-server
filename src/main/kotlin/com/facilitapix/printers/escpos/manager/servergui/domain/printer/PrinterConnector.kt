@@ -69,6 +69,12 @@ object PrinterConnector : PrinterConnectorInterface {
         escPos.close()
     }
 
+    fun connectAndExecuteCall(commands: (EscPos) -> Unit) {
+        escPos = EscPos(instantiateNewOutputStream())
+        commands(escPos)
+        escPos.close()
+    }
+
     private fun instantiateNewOutputStream(): OutputStream {
         fileName
             ?.takeIf { it.isNotEmpty() }
