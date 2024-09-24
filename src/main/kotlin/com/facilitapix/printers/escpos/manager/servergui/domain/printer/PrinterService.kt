@@ -41,7 +41,7 @@ class PrinterService {
 
         try {
             PrinterConnector.connectAndRunCommands {
-                writeLF(title, "VARGAS BIKE SHOP")
+                writeLF(title, orderReceipt.storeName ?: "VARGAS BIKE SHOP")
 
                 feed(1)
                 writeLF(body1, "Status: ${orderReceipt.status}")
