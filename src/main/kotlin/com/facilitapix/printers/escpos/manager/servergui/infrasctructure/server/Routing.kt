@@ -1,9 +1,9 @@
 package com.facilitapix.printers.escpos.manager.servergui.infrasctructure.server
 
-import com.facilitapix.printers.escpos.manager.servergui.domain.PrintOrderRequestBody
 import com.facilitapix.printers.escpos.manager.servergui.domain.printer.PrinterService
 import com.facilitapix.printers.escpos.manager.servergui.domain.server.OrderReceipt
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.facilitapix.printers.escpos.manager.servergui.domain.server.PrintOrderRequestBody
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -28,11 +28,20 @@ fun Application.configureRouting() {
             call.respond("""{"message": "OK"}""")
         }
 
-        post("v2/print-qr-code-receipt") {
+        post("v2/print") {
             val body = call.receive<PrintOrderRequestBody>()
-            val response = printerService.printFromCommands(body.orderReceipt, body.commands)
 
-            call.respond(jacksonObjectMapper().writeValueAsString(response))
+            printerService.printFromCommands(body.orderReceipt, body.commands).fold(
+                onSuccess = {
+                    call.respond("""{"status": "success"}""")
+                },
+                onFailure = {
+                    call.respond(
+                        HttpStatusCode.UnprocessableEntity,
+                        """{"status": "error", "message": "${it.message}"}"""
+                    )
+                }
+            )
         }
     }
 }

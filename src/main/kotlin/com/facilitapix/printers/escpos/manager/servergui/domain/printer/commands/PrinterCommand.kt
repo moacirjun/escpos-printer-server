@@ -1,7 +1,5 @@
 package com.facilitapix.printers.escpos.manager.servergui.domain.printer.commands
 
-interface PrinterCommand {
-    val commandName: String
-
+fun interface PrinterCommand {
     fun execute(args: Map<String, Any>)
 }

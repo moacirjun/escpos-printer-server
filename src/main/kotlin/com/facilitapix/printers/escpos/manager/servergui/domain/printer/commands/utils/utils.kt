@@ -3,8 +3,11 @@ package com.facilitapix.printers.escpos.manager.servergui.domain.printer.command
 import com.facilitapix.printers.escpos.manager.servergui.domain.server.OrderReceipt
 
 fun <T> resolveArgValue(fieldName: String, args: Map<String, Any>): T =
+    requireNotNull(resolveNullableArgValue(fieldName, args)) { "The field $fieldName is required. Received: $args" }
+
+fun <T> resolveNullableArgValue(fieldName: String, args: Map<String, Any>): T? =
     try {
-        requireNotNull(args[fieldName]) as T
+        args[fieldName] as? T
     } catch (exception: TypeCastException) {
         throw IllegalArgumentException("The field $fieldName has a unexpected Type.", exception)
     }

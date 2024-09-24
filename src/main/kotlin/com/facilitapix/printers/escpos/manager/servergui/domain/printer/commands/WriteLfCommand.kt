@@ -12,8 +12,6 @@ class WriteLfCommand(
     private val orderReceipt: OrderReceipt,
 ) : PrinterCommand {
 
-    override val commandName: String = "WRITE_LF"
-
     private val title = Style().apply {
         setFontSize(Style.FontSize._2, Style.FontSize._2)
         setJustification(EscPosConst.Justification.Center)
@@ -41,7 +39,13 @@ class WriteLfCommand(
         TITLE,
         BODY1,
         BODY2,
-        SECONDARY,
+        SECONDARY;
+
+        companion object {
+            fun fromString(styleName: String): Styles =
+                entries.find { it.name.equals(styleName, ignoreCase = true) }
+                    ?: throw IllegalArgumentException("Style not found: $styleName")
+        }
     }
 
     enum class ArgsNames(val fieldName: String) {
@@ -58,7 +62,7 @@ class WriteLfCommand(
 
     private fun resolveStyle(args: Map<String, Any>): Style {
         val styleName = resolveArgValue<String>(ArgsNames.STYLE.fieldName, args)
-        val style = Styles.valueOf(styleName)
+        val style = Styles.fromString(styleName)
         return when (style) {
             Styles.TITLE -> title
             Styles.BODY1 -> body1
@@ -72,8 +76,8 @@ class WriteLfCommand(
         return replaceOrderReceiptParams(orderReceipt, rawText)
     }
 
-    companion object {
-        fun newInstance(printerContext: EscPos, orderReceipt: OrderReceipt) =
+    object Factory : PrintCommandFactory {
+        override fun create(printerContext: EscPos, orderReceipt: OrderReceipt): PrinterCommand =
             WriteLfCommand(printerContext, orderReceipt)
     }
 }

@@ -1,6 +1,6 @@
 package com.facilitapix.printers.escpos.manager.servergui.domain.printer
 
-import com.facilitapix.printers.escpos.manager.servergui.domain.printer.commands.PrinterCommandBody
+import com.facilitapix.printers.escpos.manager.servergui.domain.server.PrinterCommandRequestBody
 import com.facilitapix.printers.escpos.manager.servergui.domain.printer.commands.PrinterCommandsHandler
 import com.facilitapix.printers.escpos.manager.servergui.domain.server.OrderReceipt
 import com.github.anastaciocintra.escpos.EscPos
@@ -73,24 +73,15 @@ class PrinterService {
         }
     }
 
-    fun printFromCommands(orderReceipt: OrderReceipt, commands: List<PrinterCommandBody>): Map<String, String> {
-        try {
+    fun printFromCommands(orderReceipt: OrderReceipt, commands: List<PrinterCommandRequestBody>): Result<Unit> =
+        runCatching {
             PrinterConnector.connectAndExecuteCall {
                 val printerCommandsHandler = PrinterCommandsHandler(it, orderReceipt)
                 printerCommandsHandler.handleCommands(commands)
             }
-
-            return mapOf("status" to "success")
-        } catch (e: Exception) {
-            logger.error("Error while printing order receipt. cause: ${e.message}", e)
-            return mapOf(
-                "status" to "error",
-                "message" to (e.message ?: "Unknown error")
-            )
+        }.onFailure {
+            logger.error("Error while printing order receipt. cause: ${it.message}", it)
         }
-    }
-
-
 
     fun changeSelectedPrinter(printServiceName: String) {
         PrinterConnector.connectToPrinter(printServiceName)

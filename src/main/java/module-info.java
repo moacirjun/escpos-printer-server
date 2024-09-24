@@ -23,7 +23,6 @@ module com.facilitapix.printers.escpos.manager.servergui {
     requires java.prefs;
     requires com.dustinredmond.fxtrayicon;
     requires okhttp3;
-    requires reflections;
     requires com.fasterxml.jackson.kotlin;
     requires com.fasterxml.jackson.databind;
     requires kotlin.reflect;

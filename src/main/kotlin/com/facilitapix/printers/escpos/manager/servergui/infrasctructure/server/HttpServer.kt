@@ -47,6 +47,7 @@ fun Application.module() {
         allowCredentials = true
         allowHost("localhost:3000", schemes = listOf("http", "https"))
         allowHost("127.0.0.1:3000", schemes = listOf("http", "https"))
+        allowHost("172.29.111.56:3000", schemes = listOf("http", "https"))
         allowHost("facilitapix.com", schemes = listOf("http", "https"))
         allowHost("auth.facilitapix.com", schemes = listOf("http", "https"))
     }
