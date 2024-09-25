@@ -1,8 +1,8 @@
 package com.facilitapix.printers.escpos.manager.servergui.infrasctructure.server
 
 import com.facilitapix.printers.escpos.manager.servergui.domain.printer.PrinterService
-import com.facilitapix.printers.escpos.manager.servergui.domain.server.OrderReceipt
-import com.facilitapix.printers.escpos.manager.servergui.domain.server.PrintOrderRequestBody
+import com.facilitapix.printers.escpos.manager.servergui.domain.server.Order
+import com.facilitapix.printers.escpos.manager.servergui.domain.server.OrderReceiptRequestBody
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -22,16 +22,16 @@ fun Application.configureRouting() {
         }
 
         post("/print-qr-code-receipt") {
-            val receipt = call.receive<OrderReceipt>()
+            val receipt = call.receive<Order>()
             printerService.printOrderReceipt(receipt)
 
             call.respond("""{"message": "OK"}""")
         }
 
         post("v2/print") {
-            val body = call.receive<PrintOrderRequestBody>()
+            val body = call.receive<OrderReceiptRequestBody>()
 
-            printerService.printFromCommands(body.orderReceipt, body.commands).fold(
+            printerService.printFromCommands(body.order, body.layout).fold(
                 onSuccess = {
                     call.respond("""{"status": "success"}""")
                 },

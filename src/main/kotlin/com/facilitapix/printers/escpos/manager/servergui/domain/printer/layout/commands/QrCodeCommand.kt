@@ -1,17 +1,17 @@
-package com.facilitapix.printers.escpos.manager.servergui.domain.printer.commands
+package com.facilitapix.printers.escpos.manager.servergui.domain.printer.layout.commands
 
-import com.facilitapix.printers.escpos.manager.servergui.domain.printer.commands.utils.replaceOrderReceiptParams
-import com.facilitapix.printers.escpos.manager.servergui.domain.printer.commands.utils.resolveArgValue
-import com.facilitapix.printers.escpos.manager.servergui.domain.printer.commands.utils.resolveNullableArgValue
-import com.facilitapix.printers.escpos.manager.servergui.domain.server.OrderReceipt
+import com.facilitapix.printers.escpos.manager.servergui.domain.printer.layout.utils.replaceOrderReceiptParams
+import com.facilitapix.printers.escpos.manager.servergui.domain.printer.layout.utils.resolveArgValue
+import com.facilitapix.printers.escpos.manager.servergui.domain.printer.layout.utils.resolveNullableArgValue
+import com.facilitapix.printers.escpos.manager.servergui.domain.server.Order
 import com.github.anastaciocintra.escpos.EscPos
 import com.github.anastaciocintra.escpos.EscPosConst
 import com.github.anastaciocintra.escpos.barcode.QRCode
 
 class QrCodeCommand(
     private val printerContext: EscPos,
-    private val orderReceipt: OrderReceipt,
-) : PrinterCommand {
+    private val order: Order,
+) : LayoutCommand {
 
     enum class ArgsNames(val fieldName: String) {
         SIZE("size"),
@@ -39,10 +39,10 @@ class QrCodeCommand(
     }
 
     private fun resolveQrCodeData(args: Map<String, Any>): String =
-        replaceOrderReceiptParams(orderReceipt, resolveArgValue(ArgsNames.DATA.fieldName, args))
+        replaceOrderReceiptParams(order, resolveArgValue(ArgsNames.DATA.fieldName, args))
 
-    object Factory : PrintCommandFactory {
-        override fun create(printerContext: EscPos, orderReceipt: OrderReceipt): PrinterCommand =
-            QrCodeCommand(printerContext, orderReceipt)
+    object Factory : LayoutCommandFactory {
+        override fun create(printerContext: EscPos, order: Order): LayoutCommand =
+            QrCodeCommand(printerContext, order)
     }
 }

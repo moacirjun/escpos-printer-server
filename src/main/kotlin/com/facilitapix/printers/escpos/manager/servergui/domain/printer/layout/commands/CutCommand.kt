@@ -1,12 +1,12 @@
-package com.facilitapix.printers.escpos.manager.servergui.domain.printer.commands
+package com.facilitapix.printers.escpos.manager.servergui.domain.printer.layout.commands
 
-import com.facilitapix.printers.escpos.manager.servergui.domain.printer.commands.utils.resolveArgValue
-import com.facilitapix.printers.escpos.manager.servergui.domain.server.OrderReceipt
+import com.facilitapix.printers.escpos.manager.servergui.domain.printer.layout.utils.resolveArgValue
+import com.facilitapix.printers.escpos.manager.servergui.domain.server.Order
 import com.github.anastaciocintra.escpos.EscPos
 
 class CutCommand(
     private val printerContext: EscPos,
-) : PrinterCommand {
+) : LayoutCommand {
 
     override fun execute(args: Map<String, Any>) {
         printerContext.cut(
@@ -19,8 +19,8 @@ class CutCommand(
             ?: EscPos.CutMode.FULL
     }
 
-    object Factory : PrintCommandFactory {
-        override fun create(printerContext: EscPos, orderReceipt: OrderReceipt): PrinterCommand =
+    object Factory : LayoutCommandFactory {
+        override fun create(printerContext: EscPos, order: Order): LayoutCommand =
             CutCommand(printerContext)
     }
 }

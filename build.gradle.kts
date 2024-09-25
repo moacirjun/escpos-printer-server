@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "com.facilitapix.printers.escpos.manager"
-version = "1.0.0"
+version = "1.9.0"
 
 repositories {
     mavenCentral()

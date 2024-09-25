@@ -1,4 +1,4 @@
-package com.facilitapix.printers.escpos.manager.servergui.domain.printer.commands.utils
+package com.facilitapix.printers.escpos.manager.servergui.domain.printer.layout.utils
 
 enum class OrderParamsSignature(val signature: String) {
     STORE_NAME("{{store_name}}"),

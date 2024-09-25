@@ -1,16 +1,16 @@
-package com.facilitapix.printers.escpos.manager.servergui.domain.printer.commands
+package com.facilitapix.printers.escpos.manager.servergui.domain.printer.layout.commands
 
-import com.facilitapix.printers.escpos.manager.servergui.domain.printer.commands.utils.resolveArgValue
-import com.facilitapix.printers.escpos.manager.servergui.domain.printer.commands.utils.replaceOrderReceiptParams
-import com.facilitapix.printers.escpos.manager.servergui.domain.server.OrderReceipt
+import com.facilitapix.printers.escpos.manager.servergui.domain.printer.layout.utils.resolveArgValue
+import com.facilitapix.printers.escpos.manager.servergui.domain.printer.layout.utils.replaceOrderReceiptParams
+import com.facilitapix.printers.escpos.manager.servergui.domain.server.Order
 import com.github.anastaciocintra.escpos.EscPos
 import com.github.anastaciocintra.escpos.EscPosConst
 import com.github.anastaciocintra.escpos.Style
 
 class WriteLfCommand(
     private val printerContext: EscPos,
-    private val orderReceipt: OrderReceipt,
-) : PrinterCommand {
+    private val order: Order,
+) : LayoutCommand {
 
     private val title = Style().apply {
         setFontSize(Style.FontSize._2, Style.FontSize._2)
@@ -73,11 +73,11 @@ class WriteLfCommand(
 
     private fun resolveText(args: Map<String, Any>): String {
         val rawText = resolveArgValue<String>(ArgsNames.TEXT.fieldName, args)
-        return replaceOrderReceiptParams(orderReceipt, rawText)
+        return replaceOrderReceiptParams(order, rawText)
     }
 
-    object Factory : PrintCommandFactory {
-        override fun create(printerContext: EscPos, orderReceipt: OrderReceipt): PrinterCommand =
-            WriteLfCommand(printerContext, orderReceipt)
+    object Factory : LayoutCommandFactory {
+        override fun create(printerContext: EscPos, order: Order): LayoutCommand =
+            WriteLfCommand(printerContext, order)
     }
 }

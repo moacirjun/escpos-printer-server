@@ -1,8 +1,8 @@
 package com.facilitapix.printers.escpos.manager.servergui.domain.printer
 
-import com.facilitapix.printers.escpos.manager.servergui.domain.server.PrinterCommandRequestBody
-import com.facilitapix.printers.escpos.manager.servergui.domain.printer.commands.PrinterCommandsHandler
-import com.facilitapix.printers.escpos.manager.servergui.domain.server.OrderReceipt
+import com.facilitapix.printers.escpos.manager.servergui.domain.server.OrderReceiptLayoutCommand
+import com.facilitapix.printers.escpos.manager.servergui.domain.printer.layout.OrderReceiptLayoutPrinter
+import com.facilitapix.printers.escpos.manager.servergui.domain.server.Order
 import com.github.anastaciocintra.escpos.EscPos
 import com.github.anastaciocintra.escpos.EscPosConst
 import com.github.anastaciocintra.escpos.Style
@@ -15,7 +15,7 @@ class PrinterService {
 
     fun getAllPrinters(): List<String> = PrinterConnector.getAllPrinters()
 
-    fun printOrderReceipt(orderReceipt: OrderReceipt) {
+    fun printOrderReceipt(order: Order) {
         val title = Style().apply {
             setFontSize(Style.FontSize._2, Style.FontSize._2)
             setJustification(EscPosConst.Justification.Center)
@@ -41,25 +41,25 @@ class PrinterService {
 
         try {
             PrinterConnector.connectAndRunCommands {
-                writeLF(title, orderReceipt.storeName ?: "VARGAS BIKE SHOP")
+                writeLF(title, order.storeName ?: "VARGAS BIKE SHOP")
 
                 feed(1)
-                writeLF(body1, "Status: ${orderReceipt.status}")
+                writeLF(body1, "Status: ${order.status}")
                 feed(1)
 
-                writeLF(body1, "Sequência: ${orderReceipt.orderId}")
-                writeLF(body2, orderReceipt.customerName)
-                writeLF(body1, orderReceipt.amount)
+                writeLF(body1, "Sequência: ${order.orderId}")
+                writeLF(body2, order.customerName)
+                writeLF(body1, order.amount)
 
                 write(
                     QRCode().apply {
                         setSize(5)
                         setJustification(EscPosConst.Justification.Center)
                     },
-                    orderReceipt.qrCode
+                    order.qrCode
                 )
 
-                writeLF(body2, "Data: ${orderReceipt.orderDate}")
+                writeLF(body2, "Data: ${order.orderDate}")
                 writeLF(secondaryText, "facilitapix.com")
 
                 feed(1)
@@ -73,11 +73,11 @@ class PrinterService {
         }
     }
 
-    fun printFromCommands(orderReceipt: OrderReceipt, commands: List<PrinterCommandRequestBody>): Result<Unit> =
+    fun printFromCommands(order: Order, layoutCommands: List<OrderReceiptLayoutCommand>): Result<Unit> =
         runCatching {
             PrinterConnector.connectAndExecuteCall {
-                val printerCommandsHandler = PrinterCommandsHandler(it, orderReceipt)
-                printerCommandsHandler.handleCommands(commands)
+                val orderReceiptLayoutPrinter = OrderReceiptLayoutPrinter(it, order)
+                orderReceiptLayoutPrinter.print(layoutCommands)
             }
         }.onFailure {
             logger.error("Error while printing order receipt. cause: ${it.message}", it)
@@ -91,7 +91,7 @@ class PrinterService {
     fun printTestReceipt() {
         try {
             printOrderReceipt(
-                OrderReceipt(
+                Order(
                     orderId = "123456",
                     customerName = "João da Silva",
                     amount = "R$ 123,45",
