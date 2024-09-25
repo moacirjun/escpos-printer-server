@@ -1,7 +1,9 @@
 package com.facilitapix.printers.escpos.manager.servergui.domain.server
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 
+@JsonIgnoreProperties
 data class Order(
     @JsonProperty("order_id")
     val orderId: String,
